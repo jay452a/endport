@@ -1,0 +1,43 @@
+/**
+ * Created by lenovo on 2017/10/16.
+ */
+import axios from 'axios'
+const io = axios.create(
+  {
+    withCredentials: true
+   // headers: {'Content-Type': 'application/json;charset=utf-8'}
+  })
+io.interceptors.request.use((config) => {
+  console.log(config, 'ior')
+  config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+  return config
+}, (error) => {
+  return Promise.reject(error)
+})
+io.interceptors.response.use((response) => {
+  console.log(response, 'io')
+  if (response.data.resCode === '0' || response.data.code === 200) return response.data.data
+  else return Promise.reject(response.data.errmsg)
+}, (error) => {
+  // 400 参数错误
+  // 401 未登录
+  try {
+    switch (error.response.status) {
+      case 401: {
+        // let hostname = window.location.hostname
+        // let hostArr = hostname.split('.')
+        // hostArr.splice(0, 1)
+        // let domain = hostArr.join('.')
+        // let loginUrl = domain === 'test61.ums86.com' ? 'http://open-client.test61.ums86.com/#/login' : '/client/index/index.html#/login'
+        setTimeout(() => { window.location.href = '#/firstPage' }, 2000)
+        return Promise.reject(error.response.data.errmsg || error.response.data.message)
+      }
+      default:
+        return Promise.reject(error.response.data.errmsg || error.response.data.message)
+    }
+  } catch (e) {
+    return Promise.reject(new Error('服务器无响应').message)
+  }
+})
+
+export default io
