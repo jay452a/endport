@@ -48,16 +48,16 @@
     watch: {
     },
     created () {
-      let param = {
+      /* let param = {
         start: 0,
         limit: 16,
         apiType: 'BASE'
-      }
-      getApiSublist(JSON.stringify(param)).then(res => {
+      } */
+     /* getApiSublist(JSON.stringify(param)).then(res => {
         console.log(res)
       }, errMsg => {
         this.$message.warning(errMsg)
-      })
+      }) */
     }
   }
 </script>

@@ -2,8 +2,8 @@
  * Created by lenovo on 2017/9/19.
  */
 export default {
-  changeLoading ({commit}, type) {
-    commit('increment', type)
+  saveWorkIconData ({commit}, type) {
+    commit('MT_WORKINCONDATA', type)
   },
   changeCount ({commit}) {
     setTimeout(() => {

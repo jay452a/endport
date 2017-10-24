@@ -9,4 +9,6 @@ console.log(base)
 let base2 = '/pagestyle'
 export const getApiSublist = (params) => { return io.post(`${base}/api/api-jssdk/funclistbytype`, params) };
 
-export const getWorkBenchData = (params) => { return io.post(`${base2}/config/work-bench?spId=2017092910204000000`, params) };
+export const getWorkBenchData = () => { return io.get(`${base2}/config/work-bench?spId=1c5d468652ba4af295f9dd83aa62e152`) };
+
+export const saveData = (params) => { return io.post(`${base2}/config/save-sysConfig`, params) };

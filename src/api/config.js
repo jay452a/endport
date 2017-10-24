@@ -6,5 +6,5 @@ export default process.env.NODE_ENV === 'development' ? {
   host: '/api' // 使用代理
 } : {
   // 发布环境
-  host: 'http://ember-ota.test61.ums86.com' // 上海
+  host: 'http://10.0.0.197:9006' // 上海
 }

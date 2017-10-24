@@ -11,12 +11,7 @@ const testVuex = new Vuex.Store({
   // 应用初始状态
   namespaced: true,
   state: {
-    isLoading: false,
-    articles: [],
-    dict: [], // 数据字典
-    roles: [], // 角色信息
-    getDS: false,
-    count: 0
+    workIconType: []  // 所有业务图标
   },
   mutations,
   actions,

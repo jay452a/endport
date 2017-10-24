@@ -6,17 +6,17 @@
       <div class="onePic" v-for="(item, index) in bannerData">
         <article>
           <label for="pic">图片：</label>
-          <input id="pic" type="text" readonly class="end-input" v-model="item.imgUrl"/>
+          <input id="pic" type="text" readonly class="end-input" v-model="item.img"/>
           <button class="end-button-primary">图片</button>
-          <div class="imgbox"></div>
+          <div class="imgbox" :style='`background-image:url(${item.img})`'></div>
         </article>
         <article>
           <label for="text">文字：</label>
-          <input id="text" type="text"  class="end-input" v-model="item.word"/>
+          <input id="text" type="text"  class="end-input" v-model="item.title"/>
         </article>
         <article>
           <label for="link">链接：</label>
-          <input id="link" type="text"  class="end-input" v-model="item.link"/>
+          <input id="link" type="text"  class="end-input" v-model="item.url"/>
         </article>
         <div class="operation">
           <button class="end-button-primary-backwhite" @click="del(index)">删除</button>
@@ -38,36 +38,58 @@
 <script>
   import end from '@/common/js/utils'
   export default{
+    props: {
+      data: {
+        type: Array,
+        default: []
+      },
+      isAdd: {
+        type: Boolean,
+        default: false
+      }
+    },
     data () {
       return {
-        bannerData: [
-        ]
+        bannerData: this.data.sort(end.arrSort('sort')),
+        bannerIsAdd: this.isAdd
       }
     },
     methods: {
       addOne () {
-        this.bannerData.push({imgUrl: '', word: '', link: ''})
+        this.bannerData.push({img: '', title: '', url: '', sort: this.bannerData.length + 1})
       },
       del (index) {
         console.log(index)
+        let sort = this.bannerData[index].sort
         this.$confirm('确认删除？')
           .then(res => {
             this.bannerData.splice(index, 1)
+            this.bannerData.map(res => {
+              if (res.sort > sort) {
+                res.sort --
+              }
+            })
           })
           .catch();
       },
       moveUp (index) {
+        this.bannerData[index].sort--
+        this.bannerData[index - 1].sort++
         end.arrSplice(this.bannerData, index, index - 1)
       },
       moveDown (index) {
+        this.bannerData[index].sort++
+        this.bannerData[index + 1].sort--
         end.arrSplice(this.bannerData, index, index + 1)
       },
       cancel () {
         this.$emit('cancel')
       },
       submit () {
-        this.$emit('submit')
+        this.$emit('submit', this.bannerData)
       }
+    },
+    created () {
     }
   }
 </script>
@@ -105,6 +127,8 @@
       border:1px solid $borderColor;
       margin-top: 15px;
       margin-left: 47px;
+      background-size: auto 100%;
+      background-position: center;
     }
   }
   .operation{

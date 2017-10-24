@@ -8,14 +8,14 @@ const io = axios.create(
    // headers: {'Content-Type': 'application/json;charset=utf-8'}
   })
 io.interceptors.request.use((config) => {
-  console.log(config, 'ior')
-  config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+  // config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
   return config
 }, (error) => {
   return Promise.reject(error)
 })
 io.interceptors.response.use((response) => {
-  console.log(response, 'io')
+  console.log(response, 'res')
+  response.headers['content-type'] = 'application/json;charset=UTF-8'
   if (response.data.resCode === '0' || response.data.code === 200) return response.data.data
   else return Promise.reject(response.data.errmsg)
 }, (error) => {

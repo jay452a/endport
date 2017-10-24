@@ -9,6 +9,8 @@ import 'element-ui/lib/theme-default/index.css'
 Vue.config.productionTip = false
 import '../../style/public.scss';
 import '../../style/iconfont.css'
+import $ from 'jquery'
+window.$ = $
 Vue.use(ElementUI)
 /* eslint-disable no-new */
 new Vue({

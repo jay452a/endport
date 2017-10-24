@@ -4,28 +4,24 @@
   <div>
     <section>
       <h3 class="end-title">自定义模板</h3>
-      <div class="radioBox">
+      <!--<div class="radioBox">
         <el-radio-group v-model="radio">
           <el-radio :label="3">新闻</el-radio>
           <el-radio :label="6">公告</el-radio>
           <el-radio :label="9">图展</el-radio>
         </el-radio-group>
-      </div>
+      </div>-->
       <ul class="tableBox">
-        <li>
+        <li v-for="item in selfModuleData">
           <article>
             <p>公告</p>
             <div class="tableContent">
-              <div class="left"></div>
-              <div class="right">
-                <p>文字标题<span>2017-10-18</span></p>
-                <p>文字标题文字标题文字标题文字标题文字标...</p>
-              </div>
+              <iframe :src="item.optConfig.url" width="100%"></iframe>
             </div>
           </article>
           <el-radio class="radio" v-model="radio2" label="1">图文摘要</el-radio>
         </li>
-        <li>
+        <!--<li>
           <article>
             <p>公告</p>
             <div class="tableContent">
@@ -60,7 +56,7 @@
            </ul>
           </article>
           <el-radio class="radio" v-model="radio2" label="4">文字列表</el-radio>
-        </li>
+        </li>-->
       </ul>
     </section>
     <div class="btnBox">
@@ -71,17 +67,26 @@
 </template>
 <script>
   export default{
+    props: {
+      data: {
+        type: Array,
+        default: []
+      }
+    },
     data () {
       return {
-        radio: 3,
-        radio2: '1'
+        // radio: 3,
+        radio2: '1',
+        selfModuleData: this.data
       }
     },
     methods: {
       cancel () {
         this.$emit('cancel')
       },
-      submit () {}
+      submit () {
+        this.$emit('submit', this.selfModuleData)
+      }
     }
   }
 </script>
@@ -114,7 +119,7 @@
     padding: 0 20px;
     overflow: hidden;
     &>li{
-      width: calc(25% - 20px);
+      width: calc(50% - 20px);
       margin-right: 20px;
       float: left;
       box-sizing: border-box;
@@ -138,6 +143,12 @@
   .tableContent{
     display: flex;
     display: -ms-flexbox;
+    iframe{
+      width: 100%;
+      outline: none;
+      border:none;
+      overflow: hidden;
+    }
     .left{
       width: 35%;
       height: 60px;

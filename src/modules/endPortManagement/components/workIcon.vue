@@ -6,9 +6,7 @@
         <h3 class="end-title">业务图标选择</h3>
         <div class="radioBox">
           <el-checkbox-group v-model="checkList">
-            <el-checkbox label="考试"></el-checkbox>
-            <el-checkbox label="考勤"></el-checkbox>
-            <el-checkbox label="团建"></el-checkbox>
+            <el-checkbox :label="item.name" v-for="item in allIcon"></el-checkbox>
           </el-checkbox-group>
         </div>
         <div class="tableBox">
@@ -17,7 +15,10 @@
             </el-table-column>
             <el-table-column prop="name" label="业务" width="250">
             </el-table-column>
-            <el-table-column prop="img" label="图标" width="350">
+            <el-table-column prop="img" label="图标" width="250">
+              <template scope="scope">
+                <img :src="scope.row.img" style="width: 50px"/>
+              </template>
             </el-table-column>
             <el-table-column  label="操作">
               <template scope="scope">
@@ -38,46 +39,88 @@
 <script>
   import end from '@/common/js/utils'
   export default {
+    props: {
+      data: {
+        type: Array,
+        default: []
+      }
+      /* isAdd: {
+        type: Boolean,
+        default: true
+      } */
+    },
     data () {
       return {
-        workIconData: [
-        ],
-        checkList: []
+        workIconData: this.data.sort(end.arrSort('sort')),
+        checkList: [],
+        allIcon: []
+        // isAddVisible: this.isAdd
       }
     },
     methods: {
       cancel () {
         this.$emit('cancel')
       },
-      submit () {},
       moveUp (scope) {
+        this.workIconData[scope.$index].sort--
+        this.workIconData[scope.$index - 1].sort++
         end.arrSplice(this.workIconData, scope.$index, scope.$index - 1)
       },
       moveDown (scope) {
+        this.workIconData[scope.$index].sort++
+        this.workIconData[scope.$index + 1].sort--
         end.arrSplice(this.workIconData, scope.$index, scope.$index + 1)
       },
       del (id, index) {
         console.log(id, index)
         let arr = []
+        let sort = this.workIconData[index].sort
         this.$confirm('确认删除？')
           .then(res => {
             this.workIconData.splice(index, 1)
             this.workIconData.map(res => {
               arr.push(res.name)
+              if (res.sort > sort) {
+                res.sort --
+              }
             })
-            this.checkList = arr
+            this.checkList = [...arr]
           })
           .catch();
+      },
+      submit () {
+        this.$emit('submit', this.workIconData)
       }
     },
     watch: {
       checkList (value) {
-        let arr = []
-        value.map(res => {
-          arr.push({name: res})
+        let workList = []
+        value.map(res1 => {
+          this.allIcon.map(res2 => {
+            if (res1 === res2.name) {
+              workList.push(res2)
+              res2.sort = this.workIconData.length
+            }
+          })
         })
-        this.workIconData = arr
+        console.log(workList)
+        for (let i = 0; i < workList.length; i++) {
+          workList[i].sort = i
+        }
+        this.workIconData = [...workList]
+        this.workIconData.sort(end.arrSort('sort'))
       }
+    },
+    created () {
+      let listData = []
+      this.workIconData.map(res => {
+        listData.push(res.name)
+      })
+      this.checkList = [...listData]
+      this.allIcon = [...this.workIconData]
+      /* if (!this.isAddVisible) {
+        this.workIconData = []
+      } */
     }
   }
 </script>
