@@ -26,7 +26,7 @@
                 <template scope="scope">
                   <el-button type="text" @click="edit(scope.row.moduletype, scope)">编辑</el-button>
                   <el-button type="text" @click="notAllowd(scope.row.id)">禁用</el-button>
-                  <el-button type="text" @click="del(scope.$index)">删除</el-button>
+                  <el-button type="text" @click="del(scope.$index,scope.row.id)">删除</el-button>
                   <el-button type="text" @click="moveUp(scope)" v-if="scope.$index > 0">上移</el-button>
                   <el-button type="text" v-if="scope.$index < bannerData.length -1"@click="moveDown(scope)">下移</el-button>
                 </template>
@@ -52,6 +52,7 @@
           <selfModule
             v-if="selfModuleVisible"
             :data="selfModuleData"
+            :isAdd="selfIsAdd"
             @submit="saveSelfModuleData"
             @cancel="cancelSelfModule"></selfModule>
           </div>
@@ -61,7 +62,8 @@
     </div>
 
     <!--弹出框-->
-    <el-dialog title="请选择添加的模板类型" :visible.sync="moduleVisible" size="tiny">
+    <el-dialog title="请选择添加的模板类型" :visible.sync="moduleVisible" size="tiny"
+               @close="closeDialog">
       <div class="modalContent">
         <el-radio class="radio" v-model="moduletype" label="1">轮播图</el-radio><br/>
         <el-radio class="radio" v-model="moduletype" label="2">业务图标</el-radio><br/>
@@ -69,7 +71,7 @@
       </div>
       <div style="text-align: center;margin-top: 25px">
         <el-button @click="closeModal">取消</el-button>
-        <el-button type="primary" @click="saveModuleType">保存</el-button>
+        <el-button type="primary" @click="saveModuleType">确定</el-button>
       </div>
 
     </el-dialog>
@@ -148,7 +150,7 @@
   import bannerEdit from '../../components/bannerEdit.vue'
   import workIcon from '../../components/workIcon.vue'
   import selfModule from '../../components/selfModule.vue'
-  import { getWorkBenchData, saveData } from '@/api/api'
+  import { getWorkBenchData, saveData, getAllConfigData, getSelfData } from '@/api/api'
   export default{
     data () {
       return {
@@ -166,26 +168,123 @@
         tableVisible: false,
         allData: [],
         workIconData: [],
-        workIconId: ''  // 编辑那条数据的id
+        workIconId: '',  // 编辑那条数据的id
+        selfModuleDataId: '', // 编辑那条自定义模板id
+        bannerListId: '' // 编辑banner图id
       }
     },
     methods: {
+      upChangeAllDataLay (choseId, otherId) {  // 上移动改变所有数据layer
+        console.log(choseId, otherId)  //  choseId表示当前移动数据的id, otherId表示被移动数据Id
+        this.allData.slideShowMdlList.map(res => {
+          if (res.id === choseId) {
+            res.layer--
+          }
+          if (res.id === otherId) {
+            res.layer++
+          }
+        })
+        this.allData.groupBizMdlList.map(res => {
+          if (res.id === choseId) {
+            res.layer--
+          }
+          if (res.id === otherId) {
+            res.layer++
+          }
+        })
+        this.allData.optConfigMdlList.map(res => {
+          if (res.id === choseId) {
+            res.layer--
+          }
+          if (res.id === otherId) {
+            res.layer++
+          }
+        })
+      },
+      downChangeAllDataLay (choseId, otherId) {  // 下移动改变所有数据layer
+        console.log(choseId, otherId)  //  choseId表示当前移动数据的id, otherId表示被移动数据Id
+        this.allData.slideShowMdlList.map(res => {
+          if (res.id === choseId) {
+            res.layer++
+          }
+          if (res.id === otherId) {
+            res.layer--
+          }
+        })
+        this.allData.groupBizMdlList.map(res => {
+          if (res.id === choseId) {
+            res.layer++
+          }
+          if (res.id === otherId) {
+            res.layer--
+          }
+        })
+        this.allData.optConfigMdlList.map(res => {
+          if (res.id === choseId) {
+            res.layer++
+          }
+          if (res.id === otherId) {
+            res.layer--
+          }
+        })
+      },
+      delChangeLayer (id, layer) { // 删除后修改layer的值
+        console.log(id, layer)
+        this.allData.slideShowMdlList.map((res, i) => {
+          if (res.layer > layer) {
+            res.layer--
+          }
+        })
+        this.allData.groupBizMdlList.map((res, i) => {
+          if (res.layer > layer) {
+            res.layer--
+          }
+        })
+        this.allData.optConfigMdlList.map((res, i) => {
+          console.log(res.layer, 'la2223')
+          if (res.layer > layer) {
+            res.layer--
+          }
+        })
+        // 再次遍历删除，同时遍历会有问题
+        this.allData.slideShowMdlList.map((res, i) => {
+          if (res.id === id) {
+            console.log(i)
+            this.allData.slideShowMdlList.splice(i, 1)
+          }
+        })
+        this.allData.groupBizMdlList.map((res, i) => {
+          if (res.id === id) {
+            console.log(i)
+            this.allData.groupBizMdlList.splice(i, 1)
+          }
+        })
+        this.allData.optConfigMdlList.map((res, i) => {
+          if (res.id === id) {
+            console.log(i)
+            this.allData.optConfigMdlList.splice(i, 1)
+          }
+        })
+      },
       moveUp (scope) {
         this.bannerData[scope.$index].layer--
         this.bannerData[scope.$index - 1].layer++
+        this.upChangeAllDataLay(this.bannerData[scope.$index].id, this.bannerData[scope.$index - 1].id)
         end.arrSplice(this.bannerData, scope.$index, scope.$index - 1)
       },
       moveDown (scope) {
         this.bannerData[scope.$index].layer++
         this.bannerData[scope.$index + 1].layer--
+        this.downChangeAllDataLay(this.bannerData[scope.$index].id, this.bannerData[scope.$index + 1].id)
         end.arrSplice(this.bannerData, scope.$index, scope.$index + 1)
       },
-      del (index) {
+      del (index, id) {
         this.$confirm('确认删除？')
           .then(res => {
             let layer = this.bannerData[index].layer
             console.log(layer)
             this.bannerData.splice(index, 1)
+            this.delChangeLayer(id, layer)
             this.bannerData.map(res => {
               if (res.layer > layer) {
                 res.layer --
@@ -204,14 +303,17 @@
           console.log(scope.row)
           this.bannerIsAdd = false
           this.bannerList = scope.row.showList
+          this.bannerListId = scope.row.id
         } else if (moduletype === '2') {
           this.workIconVisible = true
           this.workIconData = scope.row.showList
-          this.workIconIsAdd = true
+          this.workIconIsAdd = false
           this.workIconId = scope.row.id
         } else {
           this.selfModuleVisible = true
           this.selfModuleData = scope.row.showList
+          this.selfIsAdd = false
+          this.selfModuleDataId = scope.row.id
         }
       },
       addModule () {
@@ -232,14 +334,17 @@
           this.bannerList = []
         } else if (this.moduletype === '2') {
           this.workIconVisible = true
+          this.workIconIsAdd = true
         } else {
           this.selfModuleVisible = true
+          this.selfIsAdd = true
+          this.selfModuleData = {}
         }
       },
-      savePage () {
+      savePage () { // 总体的保存
         this.saveAllData()
       },
-      saveAllData () {
+      saveAllData () { // 提交及总体保存都会调用
         saveData(this.allData).then(() => {
           this.$message.success('保存成功')
           this.editBannerVisible = false
@@ -251,26 +356,64 @@
           this.$message.warning(error)
         })
       },
-      saveBannerData (data) {
-        console.log(data)
-        this.allData.slideShowMdlList.map(res => {
-          res.slideShowList = data
-        })
+      saveBannerData (data, isAdd) {
+        if (isAdd) {
+          let layer = this.addLayer()
+          console.log(data, 'addb', layer)
+          this.allData.slideShowMdlList.push({layer: layer, slideShowList: data})
+        } else {
+          this.allData.slideShowMdlList.map(res => {
+            if (res.id === this.bannerListId) {
+              res.slideShowList = data
+            }
+          })
+        }
         console.log(this.allData)
         this.saveAllData()
       },
-      saveSelfModuleData (data) {
+      saveSelfModuleData (data, isAdd) {
         // data do something
+        console.log(data, isAdd)
+        // this.saveAllData()
+        if (isAdd) {
+          let layer = this.addLayer()
+          // console.log('add1', layer, data)
+          this.allData.optConfigMdlList.push({layer: layer, optConfig: data})
+        } else {
+          this.allData.optConfigMdlList.map(res => {
+            console.log(res.id, this.selfModuleDataId, 2221231)
+            if (res.id === this.selfModuleDataId) {
+              res.optConfig = data
+            }
+          })
+        }
         this.saveAllData()
       },
-      saveWorkIconData (data) {
+      saveWorkIconData (data, isAdd) {
         // data do something
-        console.log(data)
-        this.allData.groupBizMdlList.map(res => {
-          if (res.id === this.workIconId) {
-            res.optGroupBiz.bizList = data
-          }
-        })
+        console.log(data, isAdd)
+        if (isAdd) {
+          let layer = 1
+          this.allData.groupBizMdlList.map(() => {
+            layer++
+          })
+          this.allData.slideShowMdlList.map(() => {
+            layer++
+          })
+          this.allData.optConfigMdlList.map(() => {
+            layer++
+          })
+          this.allData.groupBizMdlList.push({
+            optGroupBiz: {bizList: data},
+            layer: layer
+          })
+        } else {
+          this.allData.groupBizMdlList.map(res => {
+            if (res.id === this.workIconId) {
+              res.optGroupBiz.bizList = data
+            }
+          })
+        }
         this.saveAllData()
       },
       getAlldataByspId () {
@@ -280,7 +423,7 @@
           this.bannerData = []
           if (sliderData.length > 0) {
             sliderData.map(res => {
-              this.bannerData.push({name: '轮播图', title: '无', showList: [...res.slideShowList], moduletype: '1', layer: res.layer})
+              this.bannerData.push({name: '轮播图', title: '无', showList: [...res.slideShowList], moduletype: '1', layer: res.layer, id: res.id})
             })
           }
           let groupBizMdlList = res.groupBizMdlList // 业务图标数据
@@ -291,7 +434,7 @@
               titleAssign += res2.name + ' '
             })
             this.bannerData.push(
-              { name: '业务图标',
+              { name: res.optGroupBiz.name ? '业务图标(' + res.optGroupBiz.name + ')' : '业务图标',
                 title: titleAssign,
                 showList: [...res.optGroupBiz.bizList],
                 moduletype: '2',
@@ -301,7 +444,9 @@
           })
           let selfDefined = res.optConfigMdlList // 自定义组件数据
           console.log(selfDefined, 224)
-          this.bannerData.push({name: '自定义模块', title: '无', showList: [...selfDefined], moduletype: '3', layer: 3})
+          selfDefined.map(res => {
+            this.bannerData.push({name: '自定义模块', title: res.optConfig.name, showList: res.optConfig, moduletype: '3', layer: res.layer, id: res.id})
+          })
           this.bannerData.sort(end.arrSort('layer'))
         }, errMsg => {
           this.$message.warning(errMsg)
@@ -322,10 +467,33 @@
       closeModal () {
         this.moduleVisible = false
         this.tableVisible = false
+      },
+      closeDialog () {},
+      addLayer () {
+        let layer = 1
+        this.allData.groupBizMdlList.map(() => {
+          layer++
+        })
+        this.allData.slideShowMdlList.map(() => {
+          layer++
+        })
+        this.allData.optConfigMdlList.map(() => {
+          layer++
+        })
+        return layer
       }
     },
     created () {
       this.getAlldataByspId()
+      getAllConfigData().then(res => {
+        console.log(res, 'dict')
+        this.$store.dispatch('getGroupDict', res[0])
+       // console.log(this.$store.state.endDictGroupData, 11)
+      })
+      getSelfData().then(res => {
+        console.log(res, 'dict2')
+        this.$store.dispatch('getSelfModuleDict', res)
+      })
     },
     components: {
       NavBar,

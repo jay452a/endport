@@ -86,7 +86,7 @@
         this.$emit('cancel')
       },
       submit () {
-        this.$emit('submit', this.bannerData)
+        this.$emit('submit', this.bannerData, this.bannerIsAdd)
       }
     },
     created () {

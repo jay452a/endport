@@ -12,3 +12,7 @@ export const getApiSublist = (params) => { return io.post(`${base}/api/api-jssdk
 export const getWorkBenchData = () => { return io.get(`${base2}/config/work-bench?spId=1c5d468652ba4af295f9dd83aa62e152`) };
 
 export const saveData = (params) => { return io.post(`${base2}/config/save-workBench`, params) };
+// 获取业务图标
+export const getAllConfigData = () => { return io.get(`${base2}/config/get-groupbiz?spId=1c5d468652ba4af295f9dd83aa62e152&groupId=59eda7f727414e5a7ccea040`) };
+// 获取自定义模块
+export const getSelfData = () => { return io.get(`${base2}/config/opt-config`) };

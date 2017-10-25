@@ -12,7 +12,7 @@
         </el-radio-group>
       </div>-->
       <ul class="tableBox">
-        <li v-for="item in selfModuleData">
+        <li v-for="item in selfConfig">
           <article>
             <p>{{item.optConfig.name}}</p>
             <div class="tableContent">
@@ -69,15 +69,21 @@
   export default{
     props: {
       data: {
-        type: Array,
-        default: []
+        type: Object,
+        default: {}
+      },
+      isAdd: {
+        type: Boolean,
+        default: false
       }
     },
     data () {
       return {
         // radio: 3,
         radio2: '',
-        selfModuleData: this.data
+        selfConfig: [],
+        selfModuleData: this.data,
+        isSelfAdd: this.isAdd
       }
     },
     methods: {
@@ -85,23 +91,24 @@
         this.$emit('cancel')
       },
       submit () {
-        this.$emit('submit', this.selfModuleData)
+        this.$emit('submit', this.selfModuleData, this.isSelfAdd)
       }
     },
     created () {
-      this.selfModuleData.map(res => {
-        if (res.optConfig.choose === true) {
-          this.radio2 = res.optConfig.id
-        }
-      })
+      if (this.isSelfAdd) {
+        this.selfModuleData = {}
+      } else {
+        console.log(this.selfModuleData)
+        this.radio2 = this.selfModuleData.id
+      }
+      this.selfConfig = this.$store.state.endSelfModuleData
     },
     watch: {
       radio2 (value) {
-        this.selfModuleData.map(res => {
+        this.selfConfig.map(res => {
+          console.log(value, res.id)
           if (res.optConfig.id === value) {
-            res.optConfig.choose = true
-          } else {
-            res.optConfig.choose = false
+            this.selfModuleData = res.optConfig
           }
         })
       }

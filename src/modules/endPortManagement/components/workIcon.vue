@@ -6,7 +6,7 @@
         <h3 class="end-title">业务图标选择</h3>
         <div class="radioBox">
           <el-checkbox-group v-model="checkList">
-            <el-checkbox :label="item.name" v-for="item in allIcon"></el-checkbox>
+            <el-checkbox :label="item.appId" v-for="item in allIcon">{{item.name}}</el-checkbox>
           </el-checkbox-group>
         </div>
         <div class="tableBox">
@@ -43,18 +43,18 @@
       data: {
         type: Array,
         default: []
-      }
-      /* isAdd: {
+      },
+      isAdd: {
         type: Boolean,
         default: true
-      } */
+      }
     },
     data () {
       return {
         workIconData: this.data.sort(end.arrSort('sort')),
         checkList: [],
-        allIcon: []
-        // isAddVisible: this.isAdd
+        allIcon: [],
+        isAddVisible: this.isAdd
       }
     },
     methods: {
@@ -89,7 +89,7 @@
           .catch();
       },
       submit () {
-        this.$emit('submit', this.workIconData)
+        this.$emit('submit', this.workIconData, this.isAddVisible)
       }
     },
     watch: {
@@ -97,7 +97,7 @@
         let workList = []
         value.map(res1 => {
           this.allIcon.map(res2 => {
-            if (res1 === res2.name) {
+            if (res1 === res2.appId) {
               workList.push(res2)
               res2.sort = this.workIconData.length
             }
@@ -114,13 +114,17 @@
     created () {
       let listData = []
       this.workIconData.map(res => {
-        listData.push(res.name)
+        listData.push(res.appId)
       })
       this.checkList = [...listData]
-      this.allIcon = [...this.workIconData]
-      /* if (!this.isAddVisible) {
+      // this.allIcon = [...this.workIconData]
+      this.$store.state.endDictGroupData.bizList.map(res => {
+        this.allIcon.push({...res})
+      })
+      if (this.isAddVisible) {
         this.workIconData = []
-      } */
+        this.checkList = []
+      }
     }
   }
 </script>

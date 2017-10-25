@@ -11,7 +11,9 @@ const testVuex = new Vuex.Store({
   // 应用初始状态
   namespaced: true,
   state: {
-    workIconType: []  // 所有业务图标
+    workIconType: [],  // 所有业务图标
+    endDictGroupData: '',  // 获取所有业务配置
+    endSelfModuleData: ''
   },
   mutations,
   actions,
