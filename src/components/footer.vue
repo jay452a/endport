@@ -1,10 +1,10 @@
 <template>
   <div :class="filterHB ? 'footer' : 'footer fixbottom'">
     <div class="container b_line">
-      <span class="cominfo">
+      <!--<span class="cominfo">
         上海帜讯信息技术股份有限公司
-      </span>
-      <span class="beianinfo">软件企业编号：沪CR-2013-0914 | 高新技术企业编号：GR201331000080     Copyright © 2017 上海帜讯信息技术股份有限公司</span>
+      </span>-->
+      <span class="beianinfo"><i></i>软件企业编号：沪CR-2013-0914 | 高新技术企业编号：GR201331000080     Copyright © 2017 上海帜讯信息技术股份有限公司</span>
     </div>
   </div>
 </template>
@@ -39,13 +39,21 @@
       display: inline-block;
     }
     .beianinfo{
-      background: url('~@/assets/images/beian-ico.png') left no-repeat;
-      padding-left: 30px;
       line-height: 200%;
-      margin-top: 20px;
       font-size: 14px;
       color: #fff;
-      float: right;
+      // float: right;
+      display: block;
+      margin: 20px auto;
+      text-align: center;
+      i{
+        width: 20px;
+        height:20px;
+        display: inline-block;
+        margin-right: 2px;
+        background: url('~@/assets/images/beian-ico.png') left no-repeat;
+        vertical-align: middle;
+      }
     }
     &.fixbottom {
       // position: fixed;

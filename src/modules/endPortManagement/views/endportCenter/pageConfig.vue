@@ -68,7 +68,7 @@
         <el-radio class="radio" v-model="moduletype" label="3">自定义模块</el-radio>
       </div>
       <div style="text-align: center;margin-top: 25px">
-        <el-button @click="moduleVisible = false">取消</el-button>
+        <el-button @click="closeModal">取消</el-button>
         <el-button type="primary" @click="saveModuleType">保存</el-button>
       </div>
 
@@ -165,7 +165,8 @@
         selfModuleVisible: false,
         tableVisible: false,
         allData: [],
-        workIconData: []
+        workIconData: [],
+        workIconId: ''  // 编辑那条数据的id
       }
     },
     methods: {
@@ -207,6 +208,7 @@
           this.workIconVisible = true
           this.workIconData = scope.row.showList
           this.workIconIsAdd = true
+          this.workIconId = scope.row.id
         } else {
           this.selfModuleVisible = true
           this.selfModuleData = scope.row.showList
@@ -263,8 +265,11 @@
       },
       saveWorkIconData (data) {
         // data do something
+        console.log(data)
         this.allData.groupBizMdlList.map(res => {
-          res.optGroupBiz.bizList = data
+          if (res.id === this.workIconId) {
+            res.optGroupBiz.bizList = data
+          }
         })
         this.saveAllData()
       },
@@ -285,7 +290,14 @@
             res.optGroupBiz.bizList.map(res2 => {
               titleAssign += res2.name + ' '
             })
-            this.bannerData.push({name: '业务图标', title: titleAssign, showList: [...res.optGroupBiz.bizList], moduletype: '2', layer: res.layer})
+            this.bannerData.push(
+              { name: '业务图标',
+                title: titleAssign,
+                showList: [...res.optGroupBiz.bizList],
+                moduletype: '2',
+                layer: res.layer,
+                id: res.id
+              })
           })
           let selfDefined = res.optConfigMdlList // 自定义组件数据
           console.log(selfDefined, 224)
@@ -305,6 +317,10 @@
       },
       cancelSelfModule () {
         this.selfModuleVisible = false
+        this.tableVisible = false
+      },
+      closeModal () {
+        this.moduleVisible = false
         this.tableVisible = false
       }
     },
