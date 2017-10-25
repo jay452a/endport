@@ -13,35 +13,39 @@
         </div>
           <!--右侧-->
         <div class="tableBox">
-          <el-button type="primary" class="addBanner" @click="addModule"><i class="el-icon-plus"></i>添加模块</el-button>
-          <el-table :data="bannerData" border width="100%">
-            <el-table-column type="index" label="排序" width="80">
-            </el-table-column>
-            <el-table-column prop="name" label="模块名字" width="180">
-            </el-table-column>
-            <el-table-column prop="title" label="模块内业务" width="350">
-            </el-table-column>
-            <el-table-column  label="操作">
-              <template scope="scope">
-                <el-button type="text" @click="edit(scope.row.moduletype, scope)">编辑</el-button>
-                <el-button type="text" @click="notAllowd(scope.row.id)">禁用</el-button>
-                <el-button type="text" @click="del(scope.$index)">删除</el-button>
-                <el-button type="text" @click="moveUp(scope)" v-if="scope.$index > 0">上移</el-button>
-                <el-button type="text" v-if="scope.$index < bannerData.length -1"@click="moveDown(scope)">下移</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-          <el-button type="primary" @click="savePage" style="margin: 15px auto;display: block">保存</el-button>
+          <div class="pageTableContent">
+            <el-button type="primary" class="addBanner" @click="addModule"><i class="el-icon-plus"></i>添加模块</el-button>
+            <el-table :data="bannerData" border width="100%">
+              <el-table-column type="index" label="排序" width="80">
+              </el-table-column>
+              <el-table-column prop="name" label="模块名字" width="180">
+              </el-table-column>
+              <el-table-column prop="title" label="模块内业务" width="350">
+              </el-table-column>
+              <el-table-column  label="操作">
+                <template scope="scope">
+                  <el-button type="text" @click="edit(scope.row.moduletype, scope)">编辑</el-button>
+                  <el-button type="text" @click="notAllowd(scope.row.id)">禁用</el-button>
+                  <el-button type="text" @click="del(scope.$index)">删除</el-button>
+                  <el-button type="text" @click="moveUp(scope)" v-if="scope.$index > 0">上移</el-button>
+                  <el-button type="text" v-if="scope.$index < bannerData.length -1"@click="moveDown(scope)">下移</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+            <el-button type="primary" @click="savePage" style="margin: 15px auto;display: block">保存</el-button>
+            <div class="cover" v-show="tableVisible"></div>
+          </div>
+
           <bannerEdit
             class="bannerEdit" v-if="editBannerVisible"
             :data="bannerList"
             :isAdd="bannerIsAdd"
             @submit="saveBannerData"
-            @cancel="editBannerVisible=false">
+            @cancel="cancelBannerEdit">
           </bannerEdit>
           <workIcon
             v-if="workIconVisible"
-            @cancel="workIconVisible=false"
+            @cancel="cancelWorkIcon"
             :isAdd="workIconIsAdd"
             @submit="saveWorkIconData"
             :data="workIconData"></workIcon>
@@ -49,7 +53,7 @@
             v-if="selfModuleVisible"
             :data="selfModuleData"
             @submit="saveSelfModuleData"
-            @cancel="selfModuleVisible=false"></selfModule>
+            @cancel="cancelSelfModule"></selfModule>
           </div>
           <!--右侧-->
           <div style="clear: both"></div>
@@ -124,6 +128,19 @@
   .el-carousel__item:nth-child(2n+1) {
     background-color: #d3dce6;
   }
+  .pageTableContent{
+    position: relative;
+    .cover{
+      position: absolute;
+      width: 100%;
+      height:100%;
+      background: white;
+      z-index: 10;
+      top:0;
+      left: 0;
+      opacity: 0.5;
+    }
+  }
 </style>
 <script>
   import NavBar from '@/components/navBar'
@@ -146,6 +163,7 @@
         editBannerVisible: false,
         workIconVisible: false,
         selfModuleVisible: false,
+        tableVisible: false,
         allData: [],
         workIconData: []
       }
@@ -179,6 +197,7 @@
         this.editBannerVisible = false
         this.workIconVisible = false
         this.selfModuleVisible = false
+        this.tableVisible = true
         if (moduletype === '1') {
           this.editBannerVisible = true
           console.log(scope.row)
@@ -195,6 +214,7 @@
       },
       addModule () {
         this.moduleVisible = true
+        this.tableVisible = true
       },
       notAllowd () {},
       saveModuleType () {
@@ -202,6 +222,7 @@
         this.editBannerVisible = false
         this.workIconVisible = false
         this.selfModuleVisible = false
+        this.tableVisible = true
         console.log(this.moduletype)
         if (this.moduletype === '1') {
           this.editBannerVisible = true
@@ -213,8 +234,6 @@
           this.selfModuleVisible = true
         }
       },
-      yewuEditShow () {},
-      selfModuleEditShow () {},
       savePage () {
         this.saveAllData()
       },
@@ -224,6 +243,7 @@
           this.editBannerVisible = false
           this.workIconVisible = false
           this.selfModuleVisible = false
+          this.tableVisible = false
           this.getAlldataByspId()
         }, error => {
           this.$message.warning(error)
@@ -274,6 +294,18 @@
         }, errMsg => {
           this.$message.warning(errMsg)
         })
+      },
+      cancelBannerEdit () {
+        this.editBannerVisible = false
+        this.tableVisible = false
+      },
+      cancelWorkIcon () {
+        this.workIconVisible = false
+        this.tableVisible = false
+      },
+      cancelSelfModule () {
+        this.selfModuleVisible = false
+        this.tableVisible = false
       }
     },
     created () {

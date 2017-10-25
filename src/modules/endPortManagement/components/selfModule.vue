@@ -14,12 +14,12 @@
       <ul class="tableBox">
         <li v-for="item in selfModuleData">
           <article>
-            <p>公告</p>
+            <p>{{item.optConfig.name}}</p>
             <div class="tableContent">
               <iframe :src="item.optConfig.url" width="100%"></iframe>
             </div>
           </article>
-          <el-radio class="radio" v-model="radio2" label="1">图文摘要</el-radio>
+          <el-radio class="radio" v-model="radio2" :label="item.optConfig.id">{{item.optConfig.name}}</el-radio>
         </li>
         <!--<li>
           <article>
@@ -76,7 +76,7 @@
     data () {
       return {
         // radio: 3,
-        radio2: '1',
+        radio2: '',
         selfModuleData: this.data
       }
     },
@@ -86,6 +86,24 @@
       },
       submit () {
         this.$emit('submit', this.selfModuleData)
+      }
+    },
+    created () {
+      this.selfModuleData.map(res => {
+        if (res.optConfig.choose === true) {
+          this.radio2 = res.optConfig.id
+        }
+      })
+    },
+    watch: {
+      radio2 (value) {
+        this.selfModuleData.map(res => {
+          if (res.optConfig.id === value) {
+            res.optConfig.choose = true
+          } else {
+            res.optConfig.choose = false
+          }
+        })
       }
     }
   }
@@ -121,6 +139,7 @@
     &>li{
       width: calc(50% - 20px);
       margin-right: 20px;
+      margin-top: 20px;
       float: left;
       box-sizing: border-box;
       text-align: center;
