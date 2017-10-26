@@ -15,7 +15,7 @@
         </el-submenu>
         <el-submenu index="3">
           <template slot="title"><i class="iconfont icon-weixin"></i>微信开放服务</template>
-          <el-menu-item index="">1</el-menu-item>
+          <el-menu-item index="demo">demo</el-menu-item>
           <el-menu-item index="">2</el-menu-item>
         </el-submenu>
         <el-submenu index="4">
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-  import { getApiSublist } from '@/api/api.js'
+  // import { getApiSublist } from '@/api/api.js'
   export default {
     data () {
       return {

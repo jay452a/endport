@@ -4,6 +4,7 @@ import styleConfig from 'endportView/endportCenter/styleConfig'
 import pageConfig from 'endportView/endportCenter/pageConfig'
 import firstPage from 'endportView/firstPage'
 import positionServer from 'endportView/appOpenServer/positionServer'
+import demo from 'endportView/learnDemo'
 Vue.use(Router)
 
 export default new Router({
@@ -27,6 +28,11 @@ export default new Router({
       path: '/positionServer',
       name: 'positionServer',
       component: positionServer
+    },
+    {
+      path: '/demo',
+      name: 'demo',
+      component: demo
     },
     {
       path: '*',
