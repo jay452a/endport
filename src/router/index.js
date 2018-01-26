@@ -1,8 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import styleConfig from 'endportView/endportCenter/styleConfig'
+// import styleConfig from 'endportView/endportCenter/styleConfig'
+const styleConfig = () => import('endportView/endportCenter/styleConfig')
 import pageConfig from 'endportView/endportCenter/pageConfig'
-import firstPage from 'endportView/firstPage'
+// import firstPage from 'endportView/firstPage'
+const firstPage = () => import('endportView/firstPage')
 import positionServer from 'endportView/appOpenServer/positionServer'
 import demo from 'endportView/learnDemo'
 Vue.use(Router)

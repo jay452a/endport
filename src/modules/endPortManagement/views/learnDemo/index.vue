@@ -39,7 +39,7 @@
       <br>
       <span>Checked names: {{ checkedNames }}</span>
     </div>
-    <p>组件：<navBar></navBar></p>
+    <p>组件：<navBar data="参数"><span slot="test">test</span></navBar></p>
   </section>
 </template>
 <script>

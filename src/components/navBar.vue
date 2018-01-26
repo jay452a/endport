@@ -1,10 +1,20 @@
 <template>
   <section>
-    <p><a href="#/">首页</a>&nbsp>&nbsp<a href="#/">{{pname}}</a>&nbsp>&nbsp{{name}}</p>
+    <p>
+      <a href="#/">首页</a>
+      <slot name="test"></slot>
+      &nbsp>&nbsp<a href="#/">{{pname}}</a>&nbsp>&nbsp{{name}}</p>
+     <p>{{data}}</p>
   </section>
 </template>
 <script>
   export default{
+    props: {
+      data: {
+        type: String,
+        default: '测试'
+      }
+    },
     data () {
       return {
         name: ''
